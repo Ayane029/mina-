@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Төрсөн өдрийн мэнд</title>
+<meta name="color-scheme" content="dark">
+<style>      
+:root{color-scheme:dark;--wine:#6e1423;--rose:#c8445a;--paper:#f6ead9;--ink:#3b1c20;--gold:#ffd98a;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(ellipse at 50% 30%,#a02a40,var(--wine) 70%);color:var(--paper);font-family:Georgia,"Times New Roman",serif;overflow:hidden}
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:15px;opacity:0;pointer-events:none;transition:opacity .9s}
+.scr.on{opacity:1;pointer-events:auto}
+
+.pol{background:#fff;padding:10px 10px 34px;width:min(20vw, 210px);transform:rotate(-3deg);box-shadow:0 12px 30px #0006;cursor:pointer;position:relative}
+.pol .ph,.fr .ph{aspect-ratio:1;background:linear-gradient(135deg,#e9c9c2,#d99aa6);display:flex;align-items:center;justify-content:center;color:#7a3a46;font-size:13px;text-align:center;padding:8px;background-size:cover;background-position:center}
+.pol small{position:absolute;bottom:8px;left:0;right:0;text-align:center;color:var(--ink);font-style:italic;font-size:14px}
+h1{font-weight:400;font-style:italic;font-size:24px;margin:0;text-align:center}
+.slots{display:flex;gap:6px;align-items:center;font-size:22px;letter-spacing:2px;min-height:30px}
+.slots span{width:22px;text-align:center;border-bottom:2px solid var(--gold)}
+.slots i{font-style:normal;color:var(--gold)}
+.pad{display:grid;grid-template-columns:repeat(3,58px);gap:8px}
+.pad button{height:48px;border-radius:50%;border:1.5px solid #ffd98a88;background:#ffffff14;color:var(--paper);font:20px Georgia,serif;cursor:pointer}
+.pad button:active{background:#ffffff40}
+.pad button:focus-visible,.btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.shake{animation:sh .4s}
+@keyframes sh{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+#boom{font-size:44px;color:var(--gold);letter-spacing:4px;text-shadow:0 0 18px #ffd98a}
+
+.letter{background:var(--paper);color:var(--ink);width:min(45vw, 420px);padding:24px 24px 18px;box-shadow:0 14px 34px #0007;transform:rotate(.6deg);max-height:82vh;overflow:auto}
+.letter h2{margin:0 0 10px;font-style:italic;font-weight:400;font-size:24px}
+.letter p{margin:0 0 10px;line-height:1.5;font-size:15px}
+.frs{display:flex;gap:10px;margin:10px 0}
+.fr{flex:1;background:#fff;padding:6px 6px 12px;box-shadow:0 4px 10px #0003;cursor:pointer}
+.fr:nth-child(1){transform:rotate(-2deg)}.fr:nth-child(2){transform:rotate(2deg)}
+.fr .ph{font-size:11px}
+.btn{background:var(--gold);color:var(--wine);border:0;border-radius:24px;padding:12px 28px;font:italic 18px Georgia,serif;cursor:pointer}
+
+#cake{position:relative;width:180px;height:160px}
+.tier{position:absolute;left:50%;transform:translateX(-50%);border-radius:10px 10px 6px 6px}
+.t1{bottom:0;width:180px;height:60px;background:#f3c4cb}
+.t2{bottom:60px;width:120px;height:50px;background:#fbe3e6}
+.t1:before,.t2:before{content:"";position:absolute;left:0;right:0;top:0;height:14px;background:#fff;border-radius:10px 10px 50% 50%/10px 10px 14px 14px}
+.can{position:absolute;bottom:110px;width:8px;height:30px;background:repeating-linear-gradient(#ffd98a 0 6px,#c8445a 6px 12px);border-radius:2px}
+.fl{position:absolute;bottom:140px;width:10px;height:16px;margin-left:-1px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:radial-gradient(#fff,#ffb84a 60%,#ff6a2a);box-shadow:0 0 14px 4px #ffb84a99;transition:opacity .5s,transform .5s;transform-origin:bottom;animation:fk .25s infinite alternate}
+@keyframes fk{to{transform:scale(.88,1.08) rotate(3deg)}}
+.out{opacity:0;animation:none}
+#wish{opacity:0;transition:opacity 1.2s;text-align:center;font-style:italic;font-size:28px;color:var(--gold)}
+canvas{position:fixed;inset:0;pointer-events:none;z-index:9}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<input type="file" accept="image/*" id="file" hidden>
+
+<section class="scr on" id="s1">
+ <div class="pol" id="p0" role="button" tabindex="0" aria-label="Зураг сонгох"><div class="ph">Зураг нэмэх бол товш</div><small>ayane ♡</small></div>
+ <h1>Нууц кодыг оруул</h1>
+ <div class="slots" id="slots"></div>
+ <div class="pad" id="pad"></div>
+</section>
+
+<section class="scr" id="s2"><div id="boom"></div></section>
+
+<section class="scr" id="s3">
+ <div class="letter">
+  <h2>Mina,</h2>
+  <p>Төрсөн өдрийн мэнд! Чамайг энэ ертөнцөд төрсөнд, миний амьдралд байдагт чинь үнэхээр баярлаж явдаг.</p>
+  <div class="frs">
+   <div class="fr" tabindex="0" role="button" aria-label="Зураг сонгох"><div class="ph">Зураг 1</div></div>
+   <div class="fr" tabindex="0" role="button" aria-label="Зураг сонгох"><div class="ph">Зураг 2</div></div>
+  </div>
+  <p>Чиний инээмсэглэл өдөр бүрийг гэрэлтүүлдэг. Энэ жил бүх хүсэл чинь биелэг, зүрх сэтгэл чинь дулаахан байг.</p>
+  <p style="text-align:right;font-style:italic;margin:0">— чамд хайртай хүнээс</p>
+ </div>
+ <button class="btn" id="go">Бялуу руу</button>
+</section>
+
+<section class="scr" id="s4">
+ <div id="wish">Happy Birthday, Mina!</div>
+ <div id="cake"><div class="tier t1"></div><div class="tier t2"></div></div>
+ <button class="btn" id="blow">Лаагаа үлээ 🕯️</button>
+</section>
+
+<script>
+(function(){
+"use strict";
+var CODES=["20070209","09022007"],buf="";
+var $=function(i){return document.getElementById(i)};
+var slots=$("slots"),pad=$("pad"),pick=null;
+
+function drawSlots(){
+ var h="";
+ for(var i=0;i<8;i++){
+  h+="<span>"+(buf[i]?"•":"")+"</span>";
+  if(i==3||i==5)h+="<i>:</i>";
+ }
+ slots.innerHTML=h;
+}
+drawSlots();
+
+["1","2","3","4","5","6","7","8","9","⌫","0","✓"].forEach(function(k){
+ var b=document.createElement("button");b.textContent=k;b.type="button";
+ b.setAttribute("aria-label",k);
+ b.onclick=function(){press(k)};pad.appendChild(b);
+});
+document.addEventListener("keydown",function(e){
+ if(!$("s1").classList.contains("on"))return;
+ if(/^\d$/.test(e.key))press(e.key);
+ else if(e.key==="Backspace")press("⌫");
+ else if(e.key==="Enter")press("✓");
+});
+function press(k){
+ if(k==="⌫"){buf=buf.slice(0,-1)}
+ else if(k==="✓"){check();return}
+ else if(buf.length<8){buf+=k}
+ drawSlots();
+ if(buf.length===8)check();
+}
+function check(){
+ if(CODES.indexOf(buf)>-1){unlock();return}
+ slots.classList.remove("shake");void slots.offsetWidth;slots.classList.add("shake");
+ buf="";setTimeout(drawSlots,350);
+}
+
+function show(id){
+ document.querySelectorAll(".scr").forEach(function(s){s.classList.remove("on")});
+ $(id).classList.add("on");
+}
+function unlock(){
+ show("s2");
+ $("boom").textContent="2007:02:09";
+ burst(innerWidth/2,innerHeight/2,90);
+ setTimeout(function(){show("s3")},2800);
+}
+
+// photos picked locally in the viewer's browser
+var target=null;
+function choose(el){target=el;$("file").click()}
+$("file").onchange=function(e){
+ var f=e.target.files[0];if(!f||!target)return;
+ var ph=target.querySelector(".ph");
+ ph.style.backgroundImage="url("+URL.createObjectURL(f)+")";ph.textContent="";
+};
+document.querySelectorAll(".pol,.fr").forEach(function(el){
+ el.onclick=function(){choose(el)};
+ el.onkeydown=function(e){if(e.key==="Enter"||e.key===" ")choose(el)};
+});
+
+// cake
+var cake=$("cake"),flames=[];
+[-48,-16,16,48].forEach(function(x){
+ var c=document.createElement("div");c.className="can";c.style.left="calc(50% + "+(x-4)+"px)";cake.appendChild(c);
+ var f=document.createElement("div");f.className="fl";f.style.left="calc(50% + "+(x-4)+"px)";cake.appendChild(f);flames.push(f);
+});
+$("go").onclick=function(){show("s4");song()};
+$("blow").onclick=function(){
+ flames.forEach(function(f,i){setTimeout(function(){f.classList.add("out")},i*220)});
+ $("blow").style.display="none";
+ setTimeout(number=>{
+  $("wish").style.opacity=1;
+  for(var i=0;i<5;i++)setTimeout(function(){burst(Math.random()*innerWidth,innerHeight*.35,60)},i*350);
+ },1000);
+};
+
+// public-domain "Happy Birthday" melody
+function song(){
+ try{
+  var A=new(window.AudioContext||window.webkitAudioContext)(),t=A.currentTime+.2,beat=.46;
+  var N=[[392,.75],[392,.25],[440,1],[392,1],[523,1],[494,2],[392,.75],[392,.25],[440,1],[392,1],[587,1],[523,2],
+         [392,.75],[392,.25],[784,1],[659,1],[523,1],[494,1],[440,2],[698,.75],[698,.25],[659,1],[523,1],[587,1],[523,2]];
+  N.forEach(function(n){
+   var o=A.createOscillator(),g=A.createGain();
+   o.type="triangle";o.frequency.value=n[0];o.connect(g);g.connect(A.destination);
+   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.18,t+.03);
+   g.gain.exponentialRampToValueAtTime(.001,t+n[1]*beat-.02);
+   o.start(t);o.stop(t+n[1]*beat);t+=n[1]*beat;
+  });
+ }catch(e){}
+}
+
+// confetti
+var cv=$("cv"),cx=cv.getContext("2d"),P=[],run=false;
+function size(){cv.width=innerWidth;cv.height=innerHeight}size();addEventListener("resize",size);
+function burst(x,y,n){
+ var col=["#ffd98a","#ff8fa3","#fff","#ffb84a","#f6ead9"];
+ for(var i=0;i<n;i++){var a=Math.random()*6.283,s=2+Math.random()*6;
+  P.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-2,r:2+Math.random()*3,c:col[i%5],l:1})}
+ if(!run){run=true;requestAnimationFrame(tick)}
+}
+function tick(){
+ cx.clearRect(0,0,cv.width,cv.height);
+ P=P.filter(function(p){return p.l>0});
+ P.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.12;p.vx*=.99;p.l-=.011;
+  cx.globalAlpha=Math.max(p.l,0);cx.fillStyle=p.c;cx.beginPath();cx.arc(p.x,p.y,p.r,0,6.283);cx.fill()});
+ if(P.length)requestAnimationFrame(tick);else run=false;
+}
+})();
+</script>
+</body>
+</html>
